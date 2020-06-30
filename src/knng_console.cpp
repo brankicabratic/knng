@@ -534,7 +534,7 @@ std::string HelpAction::get_help_pars()
 
 std::string HelpAction::get_help_exec()
 {
-	return "If command parameter is not present, all available commands will be listed together with their descriptions. Otherwise, if command parameter is present, only description of that command will be shown.";
+	return "Outputs help. If \"command\" parameter is not present, all available commands will be listed together with their descriptions. Otherwise, if command parameter is present, only description of that command will be shown.";
 }
 
 // TestAction class implementation.
@@ -815,8 +815,8 @@ bool DatasetAction::init(std::vector<std::string> pars)
   
 std::string DatasetAction::get_help_pars()
 {
-	return 	"ds_path - Path of the dataset.\n"
-		   	"ds_type - Dataset type. Possible values: csv[delimiter]{label_index} (Represents CSV dataset. Delimiter should be given in square brackets. Square brackets can be ommited, in which case delimiter becomes comma. Label index is given i curly brackets. Curly bracekets can also be ommited in wich case it is assumed that dataset is not labeled.)\n"
+	return 	"ds_path - Path to the dataset file.\n"
+		   	"ds_type - Dataset type. Possible values: csv[delimiter]{label_index} (Represents a CSV format. Delimiter should be given in square brackets. Square brackets can be omitted, in which case delimiter is comma. Label index is given in curly brackets. Curly brackets can also be omitted in which case it is assumed that the dataset is not labeled.)\n"
 			"ds_inst_type - Type of dataset instances. Possible values: point, timeseries.\n";
 }
 
@@ -895,7 +895,7 @@ std::string CreateDatasetAction::get_help_pars()
 
 std::string CreateDatasetAction::get_help_exec()
 {
-	return "Creates new dataset by generating values randomly (using uniform distribution).";
+	return "Creates new dataset by generating values randomly (by using uniform distribution).";
 }
 
 // LoadDatasetAction class implementation.
@@ -1094,14 +1094,14 @@ std::string RecallAction::get_help_synt(std::string command)
 
 std::string RecallAction::get_help_pars()
 {
-	return  "real_knng_path - Path to the file where real KNN graph is stored.\n"
-			"approx_knng_path - Path to the file where KNN graph approximation is stored.\n"
-			"out - If present, the recall will be outputed to the file called the same as file with KNNG approximation, but with suffix \"_recall\". Possible values: \"out\".\n";
+	return  "real_knng_path - Path to the file where real k-NN graph is stored.\n"
+			"approx_knng_path - Path to the file where k-NN graph approximation is stored.\n"
+			"out - If present, the recall will be output to the file called the same as k-NNG approximation file, but with suffix \"_recall\". Possible values: \"out\".\n";
 }
 
 std::string RecallAction::get_help_exec()
 {
-	return "Outputs the recall of the KNN graph approximation.";
+	return "Outputs the recall of the k-NN graph approximation.";
 }
 
 // KNNGAction class implementation.
@@ -1137,14 +1137,14 @@ std::string KNNGAction::get_help_synt(std::string command)
 std::string KNNGAction::get_help_pars()
 {
 	return  load_dataset_action.get_help_pars() +
-			"out_path - Path to the file where KNN graph approximation will be stored.\n"
-			"dist - Distance measure. Possible values: " + l2_dist + ", " + dtw_dist +".\n"
-			"k - Number of neighbors in KNN graph.\n";
+			"out_path - Path to the file where k-NN graph will be stored.\n"
+			"dist - Distance function. Possible values: " + l2_dist + ", " + dtw_dist +".\n"
+			"k - Number of neighbors in k-NN graph.\n";
 }
 
 std::string KNNGAction::get_help_exec()
 {
-	return "Creates KNN graph.";
+	return "Creates k-NN graph.";
 }
 
 // PartialKNNGAction class implementation.
@@ -1193,8 +1193,8 @@ std::string PartialKNNGAction::get_help_synt(std::string command)
 std::string PartialKNNGAction::get_help_pars()
 {
 	return  KNNGAction::get_help_pars() +
-			"min_id - \n"
-			"max_id - \n";
+			"min_id - NN lists of points with id less than min_id will not be calculated.\n"
+			"max_id - NN lists of points with id greater than max_id will not be calculated.\n";
 }
 
 std::string PartialKNNGAction::get_help_exec()
@@ -1262,15 +1262,15 @@ std::string NNDescentAction::get_help_synt(std::string command)
 std::string NNDescentAction::get_help_pars()
 {
 	return  KNNGAction::get_help_pars() +
-			"nndes_type - NNDescent type. Possible values: \"it\" (NNDescent terminates when given number of iterations is reached), \"conv\" (NNDescent terminates when number of updates is less than threshold).\n"
-			"it_count - This value is present when nndes_type is \"it\". It represents number of algorithm iterations.\n"
-			"conv_ratio - This value is present when nndes_type is \"conv\". If there are less than conv_ratio*N*K updates of NN lists in current iteration, the algorithm terminates.\n"
-			"sampling - The portion of neighbors to be used in local joins.";
+			"nndes_type - NN-Descent termination condition. Possible values: \"it\" (NN-Descent terminates when given number of iterations is reached), \"conv\" (NN-Descent terminates when number of updates is less than threshold).\n"
+			"it_count - This value is present when nndes_type is \"it\". It represents the number of algorithm iterations.\n"
+			"conv_ratio - This value is present when nndes_type is \"conv\". If there are less than conv_ratio*n*k updates of NN lists in most recent iteration, the algorithm terminates.\n"
+			"sampling - The portion of neighbors to be used in local joins. If not given, value 1 is assumed.";
 }
 
 std::string NNDescentAction::get_help_exec()
 {
-	return "Creates KNN graph approximation by using NNDescent algorithm.";
+	return "Creates k-NN graph approximation by using NN-Descent algorithm.";
 }
 
 // RWDescentAction class implementation.
@@ -1356,13 +1356,13 @@ std::string RWDescentAction::get_help_synt(std::string command)
 std::string RWDescentAction::get_help_pars()
 {
 	return  KNNGAction::get_help_pars() +
-			"rws_count - Random walks count. It is a number that represents count of random walks that starts from each node (it is usually some factor of k value).\n"
-			"rand_count - Number of random comparissons per point in randomize phase.\n"
-			"rwdes_type - RWDescent type. Possible values: \"it\" (RWDescent terminates when given number of iterations is reached), \"conv\" (RWDescent terminates when number of updates of each node's NN list is less than threshold).\n"
-			"it_count - This value is present when rwdes_type is \"it\". It represents number of algorithm iterations.\n"
-			"max_it_count - This value is present when rwdes_type is \"conv\". It represents maximal number of algorithm iterations. Namely, if alogrithm converges before max_it_count iterations, it will end when it converges, otherwise it will end after max_it_count iterations.\n"
-			"conv_ratio - This value is present when rwdes_type is \"conv\". Value obtained by multiplying rws_count and conv_ratio represents the treshold of updates obtained by random walks from a given node. If number of updates is above the treshold, the node did not converge, otherwise it did converge. The whole algorithm is converged when all nodes converged.\n"
-			"rw_pr - Algorithm for edges' traversal probabilities assignments during the random walks. Possible values: uniform, edge_maturity.";
+			"rws_count - Random walks count. It is the number of random walks that start from each node (it is recommended to be some factor of k value).\n"
+			"rand_count - Number of random comparisons per point in the randomization phase.\n"
+			"rwdes_type - RW-Descent termination condition. Possible values: \"it\" (RW-Descent terminates when given number of iterations is reached), \"conv\" (RW-Descent terminates when number of updates of each node's NN list is less than threshold).\n"
+			"it_count - This value is present when rwdes_type is \"it\". It represents the number of algorithm's iterations.\n"
+			"max_it_count - This value is present when rwdes_type is \"conv\". It represents the upper bound on algorithm's iterations count. Namely, the algorithm terminates after max_it_count iterations, regardless of convergence.\n"
+			"conv_ratio - This value is present when rwdes_type is \"conv\". A point converges when there is in average less than conv_ratio*rws_count updates in a few recent iterations. The algorithm converges when all points converge.\n"
+			"rw_pr - Algorithm for edge traversal probabilities. Possible values: uniform, edge_maturity.";
 }
 
 std::string RWDescentAction::get_help_exec()
@@ -1437,23 +1437,23 @@ bool NWDescentAction::execute()
 
 std::string NWDescentAction::get_help_synt(std::string command)
 {
-	return command + " ds_path ds_type ds_inst_type out_path dist k rws_count rand_count rwdes_type (it_count | max_it_count) [conv_ratio]";
+	return command + " ds_path ds_type ds_inst_type out_path dist k rws_count rand_count nwdes_type (it_count | max_it_count) [conv_ratio]";
 }
 
 std::string NWDescentAction::get_help_pars()
 {
 	return  KNNGAction::get_help_pars() +
-			"rws_count - Random walks count. It is a number that represents count of random walks that starts from each node (it is usually some factor of k value).\n"
-			"rand_count - Number of random comparissons per point in randomize phase.\n"
-			"rwdes_type - RWDescent type. Possible values: \"it\" (RWDescent terminates when given number of iterations is reached), \"conv\" (RWDescent terminates when number of updates of each node's NN list is less than threshold).\n"
-			"it_count - This value is present when rwdes_type is \"it\". It represents number of algorithm iterations.\n"
-			"max_it_count - This value is present when rwdes_type is \"conv\". It represents maximal number of algorithm iterations. Namely, if alogrithm converges before max_it_count iterations, it will end when it converges, otherwise it will end after max_it_count iterations.\n"
-			"conv_ratio - This value is present when rwdes_type is \"conv\". Value obtained by multiplying rws_count and conv_ratio represents the treshold of updates obtained by random walks from a given node. If number of updates is above the treshold, the node did not converge, otherwise it did converge. The whole algorithm is converged when all nodes converged.";
+			"rws_count - Random walks count. It is the number of random walks that start from each node (it is recommended to be some factor of k value).\n"
+			"rand_count - Number of random comparisons per point in the randomization phase.\n"
+			"nwdes_type - NW-Descent termination condition. Possible values: \"it\" (NW-Descent terminates when given number of iterations is reached), \"conv\" (NW-Descent terminates when number of updates of each node's NN list is less than threshold).\n"
+			"it_count - This value is present when nwdes_type is \"it\". It represents the number of algorithm's iterations.\n"
+			"max_it_count - This value is present when nwdes_type is \"conv\". It represents the upper bound on algorithm's iterations count. Namely, the algorithm terminates after max_it_count iterations, regardless of convergence.\n"
+			"conv_ratio - This value is present when nwdes_type is \"conv\". A point converges when there is in average less than conv_ratio*nws_count updates in a few recent iterations. The algorithm converges when all points converge.";
 }
 
 std::string NWDescentAction::get_help_exec()
 {
-	return "Creates KNN graph approximation by using NWDescent algorithm.";
+	return "Creates k-NN graph approximation by using NW-Descent algorithm.";
 }
 
 
@@ -1520,12 +1520,12 @@ std::string HANNDescentAction::get_help_synt(std::string command)
 std::string HANNDescentAction::get_help_pars()
 {
 	return  KNNGAction::get_help_pars() +
-			"ha_nndes_type - Hubness Aware NNDescent type. Possible values: \"it\" (HANNDescent terminates when given number of iterations is reached), \"conv\" (HANNDescent terminates when number of updates is less than threshold).\n"
-			"it_count - This value is present when nndes_type is \"it\". It represents number of algorithm iterations.\n"
-			"conv_ratio - This value is present when nndes_type is \"conv\". If there are less than conv_ratio*N*K updates of NN lists in current iteration, the algorithm terminates.\n"
-			"h_min - \n"
-			"h_max - \n"
-			"sampling - The portion of neighbors to be used in local joins.\n";
+			"ha_nndes_type - Hubness aware NN-Descent termination condition. Possible values: \"it\" (HA-NN-Descent terminates when given number of iterations is reached), \"conv\" (HA-NN-Descent terminates when number of updates is less than threshold).\n"
+			"it_count - This value is present when ha_nndes_type is \"it\". It represents the number of algorithm's iterations.\n"
+			"conv_ratio - This value is present when ha_nndes_type is \"conv\". If there are less than conv_ratio*n*k updates of NN lists in most recent iteration, the algorithm terminates.\n"
+			"h_min - Minimum hubness value for replacement probability.\n"
+			"h_max - Maximum hubness value for replacement probability.\n"
+			"sampling -  The portion of neighbors to be used in local joins. If not given, value 1 is assumed.\n";
 }
 
 std::string HANNDescentAction::get_help_exec()
@@ -1595,11 +1595,11 @@ std::string OversizedNNDescentAction::get_help_synt(std::string command)
 std::string OversizedNNDescentAction::get_help_pars()
 {
 	return  KNNGAction::get_help_pars() +
-			"os_nndes_type - Oversized NNDescent type. Possible values: \"it\" (Oversized NNDescent terminates when given number of iterations is reached), \"conv\" (Oversized NNDescent terminates when number of updates is less than threshold).\n"
-			"it_count - This value is present when os_nndes_type is \"it\". It represents number of algorithm iterations.\n"
-			"conv_ratio - This value is present when os_nndes_type is \"conv\". If there are less than conv_ratio*N*K updates of NN lists in current iteration, the algorithm terminates.\n"
-			"k2 - \n"
-			"sampling - The portion of neighbors to be used in local joins.\n";
+			"os_nndes_type - O-NN-Descent termination condition. Possible values: \"it\" (O-NN-Descent terminates when given number of iterations is reached), \"conv\" (O-NN-Descent terminates when number of updates is less than threshold).\n"
+			"it_count - This value is present when os_nndes_type is \"it\". It represents number of algorithm's iterations.\n"
+			"conv_ratio - This value is present when os_nndes_type is \"conv\". If there are less than conv_ratio*n*k updates of NN lists in most recent iteration, the algorithm terminates.\n"
+			"k2 - Enlarged neighborhood size.\n"
+			"sampling - The portion of neighbors to be used in local joins. If not given, value 1 is assumed.\n";
 }
 
 std::string OversizedNNDescentAction::get_help_exec()
@@ -1663,22 +1663,22 @@ bool RandomizedNNDescentAction::execute()
 
 std::string RandomizedNNDescentAction::get_help_synt(std::string command)
 {
-	return command + " ds_path ds_type ds_inst_type out_path dist k os_nndes_type (it_count | conv_ratio) r [sampling]";
+	return command + " ds_path ds_type ds_inst_type out_path dist k r_nndes_type (it_count | conv_ratio) r [sampling]";
 }
 
 std::string RandomizedNNDescentAction::get_help_pars()
 {
 	return  KNNGAction::get_help_pars() +
-			"os_nndes_type - Oversized NNDescent type. Possible values: \"it\" (Oversized NNDescent terminates when given number of iterations is reached), \"conv\" (Oversized NNDescent terminates when number of updates is less than threshold).\n"
-			"it_count - This value is present when os_nndes_type is \"it\". It represents number of algorithm iterations.\n"
-			"conv_ratio - This value is present when os_nndes_type is \"conv\". If there are less than conv_ratio*N*K updates of NN lists in current iteration, the algorithm terminates.\n"
-			"r - \n"
-			"sampling - The portion of neighbors to be used in local joins.\n";
+			"r_nndes_type - Randomized NN-Descent termination condition. Possible values: \"it\" (Randomized NN-Descent terminates when given number of iterations is reached), \"conv\" (Randomized NN-Descent terminates when number of updates is less than threshold).\n"
+			"it_count - This value is present when r_nndes_type is \"it\". It represents number of algorithm iterations.\n"
+			"conv_ratio - This value is present when r_nndes_type is \"conv\". If there are less than conv_ratio*n*k updates of NN lists in most recent iteration, the algorithm terminates.\n"
+			"r - Number of random comparisons of a single point in the randomization phase.\n"
+			"sampling - The portion of neighbors to be used in local joins. If not given, value 1 is assumed.\n";
 }
 
 std::string RandomizedNNDescentAction::get_help_exec()
 {
-	return "Creates KNN graph approximation by using Randomized NNDescent algorithm.";
+	return "Creates k-NN graph approximation by using randomized NN-Descent algorithm.";
 }
 
 // ReduceKNNGAction class implementation.
@@ -1721,14 +1721,14 @@ std::string ReduceKNNGAction::get_help_synt(std::string command)
 std::string ReduceKNNGAction::get_help_pars()
 {
 	return  load_dataset_action.get_help_pars() +
-			"knng_path - Path to the file where KNN graph is stored.\n"
-			"out_path - Path to the file where reduced KNN graph will be stored.\n"
-			"k - Number of neighbors in reduced KNN graph.\n";
+			"knng_path - Path to the file where original k-NN graph is stored.\n"
+			"out_path - Path to the file where reduced k-NN graph will be stored.\n"
+			"k - Number of neighbors in reduced k-NN graph.\n";
 }
 
 std::string ReduceKNNGAction::get_help_exec()
 {
-	return "Reduces KNN graph to given k.";
+	return "Reduces k-NN graph to given k.";
 }
 
 // PrepareSimulationAction class implementation.
@@ -1790,8 +1790,8 @@ std::string PrepareSimulationAction::get_help_pars()
 {
 	return  load_dataset_action.get_help_pars() +
 			"runs - Number of simulation runs.\n"
-			"k - K value of the KNN Graph.\n"
-			"dist - Distance function that will be used. Possible values are: \"" + l2_dist + "\" (Euclidean distance), \"" + dtw_dist + "\" (Dynamic Time Warping).\n"
+			"k - k value of the k-NN Graph.\n"
+			"dist - Distance function. Possible values: " + l2_dist + ", " + dtw_dist + ".\n"
 			"batch_size - The size of the batch that will be loaded into time series during the updates.\n"
 			"batch_size_min - When this value is given, the size of the batch that will be loaded into time series during the updates is randomly chosen. This value is the lower bound of randomly chosen batch value.\n"
 			"batch_size_max - When this value is given, the size of the batch that will be loaded into time series during the updates is randomly chosen. This value is the upper bound of randomly chosen batch value.\n"
@@ -1801,7 +1801,7 @@ std::string PrepareSimulationAction::get_help_pars()
 
 std::string PrepareSimulationAction::get_help_exec()
 {
-	return "Does a preparation for simulation by creating all KNN-Graphs later needed for calculation of recall values.";
+	return "Does a preparation for a simulation by creating all k-NN graphs that are needed for calculation of approximations' recall values. If this command is not ran before command \"simulation\", command \"simmulation\" will construct these graphs itself. These graphs are stored in cache_sim folder, which is created for this purpose on the same location where executable file is stored.";
 }
 
 // SimulationAction class implementation.
@@ -1849,10 +1849,10 @@ bool SimulationAction::init(std::vector<std::string> pars)
 
 	algorithms.push_back(new NNDescent<TimeSeries>(k, dist, dataset->get_instances(), 0.01, 1));
 	int dist_cnt =  (int)std::round((float)dataset->get_instances().size() / (4*k*k));
-	// algorithms.push_back(new RWDescent<TimeSeries>(k, dist, dataset->get_instances(), 5, dist_cnt, 10000000, 0.001));
-	// algorithms.push_back(new RWDescent<TimeSeries>(k, dist, dataset->get_instances(), 10, dist_cnt, 10000000, 0.001));
-	// algorithms.push_back(new NWDescent<TimeSeries>(k, dist, dataset->get_instances(), 5, dist_cnt, 10000000, 0.001));
-	// algorithms.push_back(new NWDescent<TimeSeries>(k, dist, dataset->get_instances(), 10, dist_cnt, 10000000, 0.001));
+	algorithms.push_back(new RWDescent<TimeSeries>(k, dist, dataset->get_instances(), 5, dist_cnt, 10000000, 0.001));
+	algorithms.push_back(new RWDescent<TimeSeries>(k, dist, dataset->get_instances(), 10, dist_cnt, 10000000, 0.001));
+	algorithms.push_back(new NWDescent<TimeSeries>(k, dist, dataset->get_instances(), 5, dist_cnt, 10000000, 0.001));
+	algorithms.push_back(new NWDescent<TimeSeries>(k, dist, dataset->get_instances(), 10, dist_cnt, 10000000, 0.001));
 
 	reference_algorithm = new NaiveKNNGraph<TimeSeries>(k, dist, dataset->get_instances());
 	simulator = new Simulator(*dataset, batch_size_min, batch_size_max, points_min, points_max);
@@ -1890,9 +1890,9 @@ std::string SimulationAction::get_help_pars()
 {
 	return  load_dataset_action.get_help_pars() +
 			"runs - Number of simulation runs.\n"
-			"out - If value \"cout\" is given, the simulation will output results to the standard output. Otherwise, the file path should be given, in which case the results will be written in that file. The results after each update come in following format: \"execution_time,dist_calcs_recall{;execution_time,dist_calcs_recall}\", where curly braces are not part of output, but mean that part inside the braces can repeat zero or more times (depending on the number of examined algorithms). Results of each update are then placed in their own line.\n"
-			"k - K value of the KNN Graph.\n"
-			"dist - Distance function that will be used. Possible values are: \"" + l2_dist + "\" (Euclidean distance), \"" + dtw_dist + "\" (Dynamic Time Warping).\n"
+			"out - If value \"cout\" is given, the results will be written in the standard output. Otherwise, the file path should be given, in which case the results will be written in that file. The results of a single iteration are written in a single line, formatted in the following way: \"time,dist_calcs{;time,dist_calcs,recall}\", where curly braces are not a part of the output, but denote repeating part (each repeated string represents results of one approximation algorithm). The part before curly braces represents results of exact k-NN graph construction.\n"
+			"k - k value of the k-NN Graph.\n"
+			"dist - Distance function. Possible values: " + l2_dist + ", " + dtw_dist + ".\n"
 			"batch_size - The size of the batch that will be loaded into time series during the updates.\n"
 			"batch_size_min - When this value is given, the size of the batch that will be loaded into time series during the updates is randomly chosen. This value is the lower bound of randomly chosen batch value.\n"
 			"batch_size_max - When this value is given, the size of the batch that will be loaded into time series during the updates is randomly chosen. This value is the upper bound of randomly chosen batch value.\n"
@@ -1902,7 +1902,7 @@ std::string SimulationAction::get_help_pars()
 
 std::string SimulationAction::get_help_exec()
 {
-	return "Executes simulation whose purpose is to evaluate performance of rw-descent algorithm used for updating KNN-Graph whose nodes are time series that change over time. Time series are always of the fixed size (that is equal to sliding window) but during the time they obtain new values, and dispose the old ones. Each time a subset of time series update, rw-descent should update KNN-Graph approximation. Newly updated approximation is then evaluated.";
+	return "Executes simulation whose purpose is to evaluate performance of approximation algorithms for k-NN graph updates.";
 }
 
 // ClearSimulationCacheAction class implementation.
@@ -1929,12 +1929,12 @@ std::string ClearSimulationCacheAction::get_help_synt(std::string command)
 
 std::string ClearSimulationCacheAction::get_help_pars()
 {
-	return  "ds_name - Name of the data set. It is actally the file name of the data set without extension.\n";
+	return  "ds_name - Name of the dataset, which is considered to be the file name of the dataset, without extension.\n";
 }
 
 std::string ClearSimulationCacheAction::get_help_exec()
 {
-	return "Removes all simulation cache for the given data set.";
+	return "Removes all simulation cache for the given dataset.";
 }
 
 
